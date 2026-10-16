@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка загрузки изображений Owadan Express</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success {
+            color: #28a745;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+        .image-test {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        img {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        .loading {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Диагностика загрузки изображений Owadan Express</h1>
+        
+        <div class="test-section">
+            <h2>1. Информация о хосте</h2>
+            <p><strong>Доменное имя:</strong> <span id="domain">Проверка...</span></p>
+            <p><strong>Протокол:</strong> <span id="protocol">Проверка...</span></p>
+            <p><strong>Полный URL приложения:</strong> <span id="fullUrl">Проверка...</span></p>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Тест API подключения</h2>
+            <button onclick="testApiConnection()">Проверить API</button>
+            <div id="apiResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Тест загрузки изображений</h2>
+            <button onclick="testImages()">Тестировать изображения</button>
+            <div id="imagesResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Рекомендации</h2>
+            <ul id="recommendations"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Информация о хосте
+        document.getElementById('domain').textContent = window.location.hostname;
+        document.getElementById('protocol').textContent = window.location.protocol;
+        document.getElementById('fullUrl').textContent = window.location.href;
+
+        // Тест API
+        async function testApiConnection() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<div class="loading">⏳ Тестирование API...</div>';
+            
+            try {
+                const response = await fetch('https://owadanexpress.com.tm/api/v1/items/?page=1');
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const firstItem = data.results[0];
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p>✓ API доступен</p>
+                            <p><strong>Найдено товаров:</strong> ${data.count}</p>
+                            <p><strong>Первый товар:</strong> ${firstItem.title_ru}</p>
+                            <p><strong>URL изображения:</strong> <code>${firstItem.image}</code></p>
+                        </div>
+                    `;
+                    
+                    // Автоматически тестируем первое изображение
+                    testImageLoad(firstItem.image);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>✗ Ошибка API: ${error.message}</p>
+                        <p>Проверьте интернет-соединение</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Тест загрузки изображения
+        function testImageLoad(imageUrl) {
+            if (!imageUrl) return;
+            
+            const resultDiv = document.getElementById('imagesResult');
+            resultDiv.innerHTML = `
+                <div class="loading">
+                    <p>⏳ Проверяем изображение: ${imageUrl}</p>
+                </div>
+            `;
+            
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = function() {
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <p>✓ Изображение загружено успешно</p>
+                        <p><strong>URL:</strong> <code>${imageUrl}</code></p>
+                        <p><strong>Размер:</strong> ${img.width}x${img.height} пикселей</p>
+                        <img src="${imageUrl}" alt="Test image">
+                    </div>
+                `;
+            };
+            
+            img.onerror = function() {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>✗ Ошибка загрузки изображения</p>
+                        <p><strong>URL:</strong> <code>${imageUrl}</code></p>
+                        <p>Возможные причины:</p>
+                        <ul>
+                            <li>Проблема CORS на сервере</li>
+                            <li>Изображение удалено</li>
+                            <li>Неверный путь</li>
+                            <li>Проблема с сертификатом SSL</li>
+                        </ul>
+                    </div>
+                `;
+            };
+            
+            img.src = imageUrl;
+        }
+
+        function testImages() {
+            testApiConnection();
+        }
+
+        // Рекомендации
+        function updateRecommendations() {
+            const recommendations = [
+                '1. Если изображения не загружаются, проверьте консоль браузера (F12) для ошибок CORS',
+                '2. Убедитесь, что домен owadanexpress.com.tm имеет правильные CORS заголовки',
+                '3. Проверьте, что изображения существуют на сервере',
+                '4. Если используется локальная разработка, обновите mediaDomain в api_config.dart',
+                '5. Попробуйте очистить кэш браузера (Ctrl+Shift+Delete)',
+                '6. Проверьте, что сертификат SSL действителен'
+            ];
+            
+            const recDiv = document.getElementById('recommendations');
+            recDiv.innerHTML = recommendations.map(r => `<li>${r}</li>`).join('');
+        }
+
+        // Инициализация
+        updateRecommendations();
+    </script>
+</body>
+</html>

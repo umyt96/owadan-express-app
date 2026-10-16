@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Owadan Express</title>
+</head>
+<body>
+  <!-- Сюда сервер возвращает после входа через Яндекс в веб-версии
+       приложения. Страница передаёт адрес (с ключом входа) обратно в окно
+       приложения и закрывается — так работает пакет flutter_web_auth_2. -->
+  <p>Вход выполнен. Это окно можно закрыть.</p>
+  <script>
+    (function () {
+      const message = { 'flutter-web-auth-2': window.location.href };
+      if (window.opener) {
+        window.opener.postMessage(message, window.location.origin);
+        window.close();
+      } else if (window.parent && window.parent !== window) {
+        window.parent.postMessage(message, window.location.origin);
+      } else {
+        localStorage.setItem('flutter-web-auth-2', window.location.href);
+        window.close();
+      }
+    })();
+  </script>
+</body>
+</html>
