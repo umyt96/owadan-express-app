@@ -203,6 +203,7 @@ class AppStrings {
     'main_info': {'ru': 'Основное', 'tk': 'Esasy maglumat'},
     'title_ru': {'ru': 'Название (русский)', 'tk': 'Ady (rus dilinde)'},
     'title_tk': {'ru': 'Название (туркменский)', 'tk': 'Ady (türkmen dilinde)'},
+    'title_en': {'ru': 'Название (английский)', 'tk': 'Ady (iňlis dilinde)'},
     'subcategory': {'ru': 'Подкатегория', 'tk': 'Bölümçe'},
     'brand': {'ru': 'Бренд', 'tk': 'Brend'},
     'no_brand': {'ru': 'Без бренда', 'tk': 'Brendsiz'},
@@ -233,6 +234,7 @@ class AppStrings {
       'ru': 'Описание (туркменский)',
       'tk': 'Düşündiriş (türkmen dilinde)'
     },
+    'description_en': {'ru': 'Описание (английский)', 'tk': 'Düşündiriş (iňlis dilinde)'},
     'description_format_note': {
       'ru':
           'Описание оформлено на сайте. Если его не менять, оформление сохранится; при изменении здесь оно станет простым текстом.',
@@ -609,6 +611,10 @@ class AppStrings {
     'auth_have_account': {
       'ru': 'Уже есть аккаунт?',
       'tk': 'Hasabyňyz barmy?',
+    },
+    'email_optional': {
+      'ru': 'Email (необязательно)',
+      'tk': 'Email (hökmany däl)',
     },
     'phone_optional': {
       'ru': 'Номер телефона (необязательно)',

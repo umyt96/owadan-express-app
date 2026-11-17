@@ -10,6 +10,7 @@ class ManageItem {
   final String slug;
   final String titleRu;
   final String titleTk;
+  final String titleEn;
   final String? image;
   final double price;
   final double? discountPrice;
@@ -24,6 +25,7 @@ class ManageItem {
     required this.slug,
     required this.titleRu,
     required this.titleTk,
+    this.titleEn = '',
     this.image,
     required this.price,
     this.discountPrice,
@@ -34,13 +36,18 @@ class ManageItem {
     required this.categoryTitle,
   });
 
-  String titleFor(String lang) => lang == 'tk' && titleTk.isNotEmpty ? titleTk : titleRu;
+  String titleFor(String lang) {
+    if (lang == 'tk' && titleTk.isNotEmpty) return titleTk;
+    if (lang == 'en' && titleEn.isNotEmpty) return titleEn;
+    return titleRu;
+  }
 
   factory ManageItem.fromJson(Map<String, dynamic> j) => ManageItem(
         id: j['id'],
         slug: j['slug'] ?? '',
         titleRu: j['title_ru'] ?? '',
         titleTk: j['title_tk'] ?? '',
+        titleEn: j['title_en'] ?? '',
         image: j['image'],
         price: (j['price'] as num?)?.toDouble() ?? 0,
         discountPrice: (j['discount_price'] as num?)?.toDouble(),
@@ -62,6 +69,7 @@ class ManageImage {
 class ManageItemDetail extends ManageItem {
   final String descriptionRu; // HTML как на сайте
   final String descriptionTk;
+  final String descriptionEn;
   final int? categoryId;
   final int? allCategoryId;
   final int? brandId;
@@ -76,6 +84,7 @@ class ManageItemDetail extends ManageItem {
   ManageItemDetail.fromJson(Map<String, dynamic> j)
       : descriptionRu = j['description_ru'] ?? '',
         descriptionTk = j['description_tk'] ?? '',
+        descriptionEn = j['description_en'] ?? '',
         categoryId = _toInt(j['category_id']),
         allCategoryId = _toInt(j['all_category_id']),
         brandId = _toInt(j['brand_id']),
@@ -91,6 +100,7 @@ class ManageItemDetail extends ManageItem {
           slug: j['slug'] ?? '',
           titleRu: j['title_ru'] ?? '',
           titleTk: j['title_tk'] ?? '',
+          titleEn: j['title_en'] ?? '',
           image: j['image'],
           price: (j['price'] as num?)?.toDouble() ?? 0,
           discountPrice: (j['discount_price'] as num?)?.toDouble(),
@@ -123,11 +133,17 @@ class RefOption {
   final int id;
   final String titleRu;
   final String titleTk;
-  RefOption({required this.id, required this.titleRu, this.titleTk = ''});
-  String titleFor(String lang) => lang == 'tk' && titleTk.isNotEmpty ? titleTk : titleRu;
+  final String titleEn;
+  RefOption({required this.id, required this.titleRu, this.titleTk = '', this.titleEn = ''});
+  String titleFor(String lang) {
+    if (lang == 'tk' && titleTk.isNotEmpty) return titleTk;
+    if (lang == 'en' && titleEn.isNotEmpty) return titleEn;
+    return titleRu;
+  }
 
   factory RefOption.size(Map<String, dynamic> j) => RefOption(id: j['id'], titleRu: j['title'] ?? '');
-  factory RefOption.color(Map<String, dynamic> j) => RefOption(id: j['id'], titleRu: j['title_ru'] ?? '', titleTk: j['title_tk'] ?? '');
+  factory RefOption.color(Map<String, dynamic> j) => RefOption(
+      id: j['id'], titleRu: j['title_ru'] ?? '', titleTk: j['title_tk'] ?? '', titleEn: j['title_en'] ?? '');
 }
 
 class CategoryNode {

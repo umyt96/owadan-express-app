@@ -100,6 +100,7 @@ const Map<String, String> appStringsEn = {
   'main_info': 'Basic information',
   'title_ru': 'Name (Russian)',
   'title_tk': 'Name (Turkmen)',
+  'title_en': 'Name (English)',
   'subcategory': 'Subcategory',
   'brand': 'Brand',
   'no_brand': 'No brand',
@@ -116,6 +117,7 @@ const Map<String, String> appStringsEn = {
   'not_selected': 'Not selected',
   'description_ru': 'Description (Russian)',
   'description_tk': 'Description (Turkmen)',
+  'description_en': 'Description (English)',
   'description_format_note':
       'The description is formatted on the website. Leave it unchanged to keep the formatting; editing it here converts it to plain text.',
   'need_title': 'Enter the name in Russian',
@@ -294,6 +296,7 @@ const Map<String, String> appStringsEn = {
   'register_intro': 'Create an account for a smoother shopping experience.',
   'auth_no_account': "Don't have an account?",
   'auth_have_account': 'Already have an account?',
+  'email_optional': 'Email (optional)',
   'phone_optional': 'Phone number (optional)',
   'username': 'Username',
   'password': 'Password',

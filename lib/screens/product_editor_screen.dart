@@ -37,14 +37,17 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
 
   final _titleRu = TextEditingController();
   final _titleTk = TextEditingController();
+  final _titleEn = TextEditingController();
   final _price = TextEditingController();
   final _discount = TextEditingController();
   final _quantity = TextEditingController(text: '1');
   final _delivery = TextEditingController();
   final _descRu = TextEditingController();
   final _descTk = TextEditingController();
+  final _descEn = TextEditingController();
   String _initialDescRu = '';
   String _initialDescTk = '';
+  String _initialDescEn = '';
 
   int? _parentCategoryId;
   int? _categoryId;
@@ -79,12 +82,14 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
     for (final c in [
       _titleRu,
       _titleTk,
+      _titleEn,
       _price,
       _discount,
       _quantity,
       _delivery,
       _descRu,
       _descTk,
+      _descEn,
       ..._sizePrice.values,
       ..._sizeDiscount.values,
     ]) {
@@ -112,6 +117,7 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
   void _fillFrom(ManageItemDetail it) {
     _titleRu.text = it.titleRu;
     _titleTk.text = it.titleTk;
+    _titleEn.text = it.titleEn;
     _price.text = _num(it.price);
     _discount.text = it.discountPrice != null ? _num(it.discountPrice!) : '';
     _quantity.text = '${it.quantity}';
@@ -120,8 +126,10 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
     // только если его действительно изменили (иначе форматирование не трогаем).
     _initialDescRu = stripHtml(it.descriptionRu);
     _initialDescTk = stripHtml(it.descriptionTk);
+    _initialDescEn = stripHtml(it.descriptionEn);
     _descRu.text = _initialDescRu;
     _descTk.text = _initialDescTk;
+    _descEn.text = _initialDescEn;
     _categoryId = it.categoryId;
     _parentCategoryId = it.allCategoryId ?? _findParent(it.categoryId);
     _brandId = it.brandId;
@@ -255,6 +263,7 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
     final fields = <String, dynamic>{
       'title_ru': _titleRu.text.trim(),
       'title_tk': _titleTk.text.trim(),
+      'title_en': _titleEn.text.trim(),
       'category_id': _categoryId,
       'brand_id': _brandId ?? '',
       'price': _price.text.trim().replaceAll(',', '.'),
@@ -275,6 +284,9 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
     }
     if (_isNew || _descTk.text.trim() != _initialDescTk.trim()) {
       fields['description_tk'] = _descTk.text;
+    }
+    if (_isNew || _descEn.text.trim() != _initialDescEn.trim()) {
+      fields['description_en'] = _descEn.text;
     }
 
     setState(() {
@@ -393,6 +405,11 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
                     maxLength: 100,
                     decoration: InputDecoration(labelText: locale.t('title_tk')),
                   ),
+                  TextField(
+                    controller: _titleEn,
+                    maxLength: 100,
+                    decoration: InputDecoration(labelText: locale.t('title_en')),
+                  ),
                   _buildCategory(locale, meta),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<int?>(
@@ -458,6 +475,13 @@ class _ProductEditorScreenState extends State<ProductEditorScreen> {
                     minLines: 3,
                     maxLines: 10,
                     decoration: InputDecoration(labelText: locale.t('description_tk'), alignLabelWithHint: true),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _descEn,
+                    minLines: 3,
+                    maxLines: 10,
+                    decoration: InputDecoration(labelText: locale.t('description_en'), alignLabelWithHint: true),
                   ),
                   const SizedBox(height: 12),
                   SwitchListTile(
@@ -825,6 +849,7 @@ class _RefPickerSheetState extends State<_RefPickerSheet> {
       if (widget.colors) {
         final ru = TextEditingController(text: text);
         final tk = TextEditingController();
+        final en = TextEditingController();
         final ok = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
@@ -834,6 +859,7 @@ class _RefPickerSheetState extends State<_RefPickerSheet> {
               children: [
                 TextField(controller: ru, decoration: InputDecoration(labelText: locale.t('title_ru'))),
                 TextField(controller: tk, decoration: InputDecoration(labelText: locale.t('title_tk'))),
+                TextField(controller: en, decoration: InputDecoration(labelText: locale.t('title_en'))),
               ],
             ),
             actions: [
@@ -843,7 +869,7 @@ class _RefPickerSheetState extends State<_RefPickerSheet> {
           ),
         );
         if (ok == true && ru.text.trim().isNotEmpty) {
-          created = await widget.service.createColor(ru.text.trim(), tk.text.trim());
+          created = await widget.service.createColor(ru.text.trim(), tk.text.trim(), en.text.trim());
         }
       } else {
         created = await widget.service.createSize(text);
@@ -869,7 +895,7 @@ class _RefPickerSheetState extends State<_RefPickerSheet> {
     final locale = context.watch<LocaleProvider>();
     final q = _search.text.trim();
     final options = _options;
-    final exact = options?.any((o) => o.titleRu.toLowerCase() == q.toLowerCase() || o.titleTk.toLowerCase() == q.toLowerCase()) ?? false;
+    final exact = options?.any((o) => o.titleRu.toLowerCase() == q.toLowerCase() || o.titleTk.toLowerCase() == q.toLowerCase() || o.titleEn.toLowerCase() == q.toLowerCase()) ?? false;
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),

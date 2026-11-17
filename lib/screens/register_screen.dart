@@ -84,14 +84,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 18),
               AuthTextField(
                 controller: _email,
-                label: locale.t('email'),
+                label: locale.t('email_optional'),
                 icon: HugeIcons.strokeRoundedMail01,
                 keyboardType: TextInputType.emailAddress,
                 autofillHints: const [AutofillHints.email],
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   final email = value?.trim() ?? '';
-                  if (email.isEmpty) return locale.t('required_field');
+                  if (email.isEmpty) return null; // необязательное поле
                   return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)
                       ? null
                       : locale.t('invalid_email');

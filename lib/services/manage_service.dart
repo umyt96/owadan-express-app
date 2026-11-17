@@ -125,9 +125,10 @@ class ManageService {
     }
   }
 
-  Future<RefOption> createColor(String titleRu, String titleTk) async {
+  Future<RefOption> createColor(String titleRu, String titleTk, String titleEn) async {
     try {
-      final r = await _dio.post('/manage/colors/', data: {'title_ru': titleRu, 'title_tk': titleTk});
+      final r = await _dio.post('/manage/colors/',
+          data: {'title_ru': titleRu, 'title_tk': titleTk, 'title_en': titleEn});
       return RefOption.color(r.data);
     } on DioException catch (e) {
       throw ApiClient.instance.toApiException(e);
